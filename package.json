@@ -1,0 +1,25 @@
+{
+  "name": "demodcandit",
+  "version": "1.0.0",
+  "description": "this the demo application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nilesh-neel/scan.git"
+  },
+  "keywords": [
+    "scan"
+  ],
+  "author": "nilesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nilesh-neel/scan/issues"
+  },
+  "homepage": "https://github.com/nilesh-neel/scan#readme",
+  "dependencies": {
+    "scandit-sdk": "^3.1.2"
+  }
+}
