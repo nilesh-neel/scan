@@ -1,106 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Scan</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" /> -->
-    <!--
-        Add the library, as explained on http://docs.scandit.com/stable/web/index.html
-    -->
+    <meta charset="UTF-8">
+    <title>Scandit Web SDK</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+    <!-- Add the library, as explained on http://docs.scandit.com/stable/web/index.html -->
     <script src="js/scandit-sdk.js"></script>
-    <!-- or -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/scandit-sdk"></script> -->
-    <!-- or -->
-    <!-- <script src="https://unpkg.com/scandit-sdk@1.0.5"></script> -->
-    <!-- or -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/scandit-sdk@1.0.5"></script> -->
-    <!-- or -->
-    <!-- <script src="/node_modules/scandit-sdk/build/browser/index.min.js"></script> -->
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: black;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            font-size: 3vh;
-            font-family: 'Open Sans', sans-serif;
-            width: 100vw;
-            height: 100vh;
-        }
-        
-        #scandit-barcode-picker {
-            max-height: 70vh;
-        }
-        
-        #scandit-barcode-result {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 1;
-            width: 100%;
-        }
-        
-        button,
-        button:active,
-        button[disabled]:hover {
-            --webkit-appearance: none;
-            border: none;
-            border-radius: none;
-            outline: none;
-            font-size: 0.7em;
-            padding: 0.4em 0.6em;
-            margin: 20px;
-            text-transform: uppercase;
-            font-family: 'Open Sans', sans-serif;
-            background: #2ec0cc;
-            color: white;
-        }
-        
-        button:hover {
-            background: #30d0d8;
-        }
-        
-        button[disabled] {
-            opacity: 0.4;
-        }
-        
-        #continue-scanning-button {
-            margin-bottom: 10vh;
-        }
-    </style>
 </head>
 
-<body>
-    <!-- Containers for the picker and the results -->
+<body onclick="console.log('body clicked')">
     <div id="scandit-barcode-picker"></div>
-    <div id="scandit-barcode-result">No codes scanned yet</div>
-    <!-- Button to continue scanning after a barcode was scanned -->
-    <button id="continue-scanning-button" onclick="continueScanning()">Continue
-            Scanning</button>
+    <div id="input-container">
+        <input id="scan-input" type="text" placeholder="Search">
+        <button id="scan" onclick="scan()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="127" height="127" viewBox="0 0 127 127"><g fill="none" fill-rule="evenodd"><g class="base" fill="#000000"><g transform="translate(16 70)"><polygon points="26 37 43 37 43 0 26 0"/><polygon points="85 37 94 37 94 0 85 0"/><polygon points="0 37 9 37 9 0 0 0"/><polygon points="11 37 20 37 20 0 11 0"/><polygon points="74 37 83 37 83 0 74 0"/><polygon points="63 37 72 37 72 0 63 0"/><polygon points="46 37 55 37 55 0 46 0"/></g><g transform="translate(16 20)"><polygon points="26 37 43 37 43 0 26 0"/><polygon points="85 37 94 37 94 0 85 0"/><polygon points="0 37 9 37 9 0 0 0"/><polygon points="11 37 20 37 20 0 11 0"/><polygon points="74 37 83 37 83 0 74 0"/><polygon points="63 37 72 37 72 0 63 0"/><polygon points="46 37 55 37 55 0 46 0"/></g><g fill-rule="nonzero"><polygon points="126 0 94 0 94 3.693 122.307 3.693 122.307 32 126 32"/><polygon points="3.693 3.693 32 3.693 32 0 0 0 0 32 3.693 32"/><polygon points="122.307 123.307 94 123.307 94 127 126 127 126 95 122.307 95"/><polygon points="0 127 32 127 32 123.307 3.693 123.307 3.693 95 0 95"/></g></g><polygon class="scanline" fill="#2EC1CE" fill-rule="nonzero" points="0 62 0 65 127 65 127 62"/></g></svg>
+        </button>
+    </div>
 
     <script>
-        // Helper function called when the "Continue Scanning" button is clicked
-        function continueScanning() {
-            if (picker) {
-                continueButton.disabled = true;
+        function scan() {
+            startScanning();
+        }
 
-                // Resume scanning
+        function showScanner() {
+            scannerContainer.style.opacity = "1";
+            scannerContainer.style.zIndex = "1";
+        }
+
+        function hideScanner() {
+            scannerContainer.style.opacity = "0";
+            scannerContainer.style.zIndex = "-1";
+        }
+
+        function startScanning() {
+            showScanner();
+            if (picker) {
                 picker.resumeScanning();
+            }
+        }
+
+        function stopScanning() {
+            hideScanner();
+            if (picker) {
+                picker.pauseScanning();
             }
         }
 
         // Configure the library and activate it with a license key
         const licenseKey = "-- ENTER YOUR SCANDIT LICENSE KEY HERE --";
 
-        // const engineLocation = "build"; // the folder containing the engine
-        // or, if using a CDN,
         const engineLocation = "https://unpkg.com/scandit-sdk/build"
 
         ScanditSDK.configure(licenseKey, {
@@ -108,47 +59,29 @@
         });
 
         const scannerContainer = document.getElementById("scandit-barcode-picker");
-        const resultContainer = document.getElementById("scandit-barcode-result");
-        const continueButton = document.getElementById("continue-scanning-button");
-        continueButton.disabled = true;
-        continueButton.hidden = true;
+        scannerContainer.style.opacity = "0";
+        scannerContainer.style.zIndex = "-1";
+        const scanInput = document.getElementById("scan-input");
         let picker;
 
         // Create & start the picker
-        ScanditSDK.BarcodePicker.create(scannerContainer, {
-                playSoundOnScan: true,
-                vibrateOnScan: true
-            })
+        ScanditSDK.BarcodePicker.create(scannerContainer)
             .then(barcodePicker => {
                 picker = barcodePicker;
                 // Create the settings object to be applied to the scanner
                 const scanSettings = new ScanditSDK.ScanSettings({
-                    enabledSymbologies: ["ean8", "ean13", "upca", "upce", "code128", "code39", "code93",
-                        "itf"
-                    ],
-                    codeDuplicateFilter: 1000
+                    enabledSymbologies: ["ean8", "ean13", "upca", "upce", "code128", "code39"]
                 });
                 picker.applyScanSettings(scanSettings);
 
-                // If a barcode is scanned, show it to the user and pause scanning
-                // (scanning is resumed when the user clicks "Continue Scanning")
                 picker.onScan(scanResult => {
-                    continueButton.hidden = false;
-                    continueButton.disabled = false;
-                    picker.pauseScanning();
-                    resultContainer.innerHTML = scanResult.barcodes.reduce((string, barcode) =>
-                        string +
-                        `${ScanditSDK.Barcode.Symbology.toHumanizedName(barcode.symbology)}: ${barcode.data}<br>`,
-                        '');
+                    stopScanning();
+                    scanInput.value = scanResult.barcodes[0].data;
                 });
-                picker.onScanError(error => {
-                    alert(error.message);
-                });
+                picker.onScanError(error => alert(error.message));
                 picker.resumeScanning();
             })
-            .catch(error => {
-                alert(error);
-            });
+            .catch(alert);
     </script>
 </body>
 
